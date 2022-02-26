@@ -15,6 +15,7 @@ from tkinter.ttk import Treeview
 from tkinter.ttk import Scrollbar
 from tkinter import Entry
 from view import SuperView
+from tkinter.filedialog import askopenfile
 
 
 class View(Tk, SuperView):
@@ -31,8 +32,8 @@ class View(Tk, SuperView):
         self.widgets_labs = {}
         self.widgets_entry = {}
         self.widgets_button = {}
-        self.buttons = ["Generate Code", "Reconstruct"]
-        self.extrabuttons = ["Content", "Clear"]
+        self.buttons = ["Generate Code", "Reconstruct", "Save", "Load"]
+        #self.extrabuttons = ["Content", "Clear"]
         self.autocomplete_values = []
         self.list_surname = []
         self.list_name = []
@@ -101,17 +102,16 @@ class View(Tk, SuperView):
                 lambda button=idi: self.button_press_handle(button)))
             self.widgets_button[idi] = buttown
             buttown.grid(row=i+1, column=j)
-            # self.widgets_button[idi].config(command = idi)
 
             j += 1
-        for idi in self.extrabuttons:
-            buttown = Button(self, text=idi, command=(
-                lambda button=idi: self.button_press_handle(button)))
-            self.widgets_button[idi] = buttown
-            buttown.grid(row=k, column=2, rowspan=2)
-            # self.widgets_button[idi].config(command = idi)
+        # for idi in self.extrabuttons:
+        #     buttown = Button(self, text=idi, command=(
+        #         lambda button=idi: self.button_press_handle(button)))
+        #     self.widgets_button[idi] = buttown
+        #     buttown.grid(row=k, column=2, rowspan=2)
+        #     # self.widgets_button[idi].config(command = idi)
 
-            k += 2
+        #     k += 2
 
     def delete_display(self, title, result):
         '''
@@ -196,14 +196,18 @@ class View(Tk, SuperView):
         if buttonid == "Generate Code":
             self.controller.string_code()
         elif buttonid == "Reconstruct":
-            self.controller.delete()
-        # elif buttonid == "Insert":
-        #     self.controller.insert()
-        # elif buttonid == "Content":
-        #     self.controller.display()
+            self.controller.reconstruct()
+        elif buttonid == "Save":
+            self.controller.save()
+        elif buttonid == "Load":
+            self.controller.load()
         elif buttonid == "Clear":
             for value in self.widgets_entry.values():
                 value.delete(0, 'end')
+
+    def open_file(self):
+        file = askopenfile(mode='r')
+        return file
 
     def main(self):
         '''
