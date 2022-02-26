@@ -1,6 +1,5 @@
 """
-    controller.py makes the controller part of the MVC model for the phonebook
-    homework
+    controller.py makes the controller part
 """
 from __future__ import absolute_import
 from huffman import Huffman
@@ -48,8 +47,16 @@ class Controller():
         # TODO
         # SO FAR WSELET LA HON
 
-            # if fetching is not None:
-         #   self.view.result_presentation(fetching)
+    def reconstruct(self):
+        '''
+        Processes the search request of a person inside the notebook.
+        '''
+        values_unpack = self.view.get_value()
+        if values_unpack:
+            test = BWT(values_unpack)
+            self.model = test
+            print(test.motif)
+            fetching = self.model.reconstruction()
 
     def delete(self, specific=None):
         '''
@@ -73,12 +80,21 @@ class Controller():
             inserted = self.model.insert_person(person)
             self.view.insertion_display('Insertion', inserted)
 
-    def save_notebook(self):
+    def save(self):
         '''
         Controller call for saving the model.
         '''
         print('Progress saved.')
-        self.model.save()
+        self.model.save_transformation('TESTCONOTROLLER')
+
+    def load(self):
+        '''
+        Controller call for saving the model.
+        '''
+        file = self.view.open_file()
+        print(str(file))
+        print('Load taken.')
+        self.model.load_transformation(file)
 
     def display(self):
         '''
