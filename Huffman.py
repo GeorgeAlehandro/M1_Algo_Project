@@ -200,7 +200,7 @@ class Huffman:
     def save_transformation(self, file):
         file = open(file, 'w')
         file.write(self.all_encoded)
-        file.write(str(self.binary_tree_value))
+        file.write(str(self.dict_compressed))
         file.close()
 
     def load_transformation(self, file):
@@ -208,8 +208,8 @@ class Huffman:
         sequence = str(file.readline())
         begin_dict = sequence.index('{')
         str_rep_of_dic = sequence[begin_dict:len(sequence)]
-        self.binary_tree_value = ast.literal_eval(
-            sequence[begin_dict:len(sequence)])
+        self.dict_compressed = str_rep_of_dic
+        self.decompressing_dict()
         print(type(self.binary_tree_value))
         self.all_encoded = sequence[0:begin_dict]
         print('dictionnaire',self.binary_tree_value)
@@ -233,6 +233,10 @@ class Huffman:
         self.binary_decoding()
         self.binary_decompression()
     def compressing_dict(self):
+        '''
+        Used to compress the dictionnary (self.binary_tree_value)
+        { + compressed values each in one character + } + missing_letters
+        '''
         self.binary_tree_value = dict(sorted(self.binary_tree_value.items()))
         values_compressed = ''
         for value in self.binary_tree_value.values():
@@ -301,41 +305,18 @@ def file2Dict(filename):
     return pickle.loads(bytes)
 
 
-# o = Huffman('ATACAAGACAT')
-# print(o.tree_parser())
-# print(o.recursive_parcours())
-# print(o.binary_transformation())
-# print(o.binary_coding())
-# print('ok')
-# print(o.binary_decoding())
-# data = 'ASDA$ASD'
 
-# # data = o.recursive_parcours(o.tree_parser()[0])
-# filename = 'yo'
-# dict2File(data, filename)
-# rd = file2Dict(filename)
-# print(rd)
-# print(type(rd))
-# print(o.binary_decompression())
-# Meshekle wa2et na3mel kaza huffman 3am yentek l binarytreevalue
 test_all_new = Huffman(
-    'NAAAAAAAACAGAAAAAANATATAAAACAGAANNTANTNANCNAAAAANNNAN')
-#test_all_new.all_compressing()
-# print(test_all_new.binary_tree_value, 'here')
-# print(test_all_new.all_encoded)
-#test_all_new.save_transformation('testHuffmansave.txt')
-#test_de = Huffman()
-#test_de.load_transformation('testHuffmansave.txt')
-#print('testestsetes'+test_de.all_encoded)
-# test_de.binary_tree_value = {'A': '1', 'T': '01', 'C': '001', 'G': '000'}
-# print(test_de.binary_tree_value)
-# test_de.all_decompressing()
-# print(test_de.binary_tree_value)
-# PROBLEM WITH: https://stackoverflow.com/questions/2398393/identifying-and-removing-null-characters-in-unix/2399817#2399817
-test_all_new.all_compressing()
+    'ATAGACAGATACTACGATCGATCGATCGATCATCAGCTGAGCTACGGCGCATGCATG')
 test_all_new.compressing_dict()
 test_all_new.decompressing_dict()
+test_all_new.save_transformation('test_mix.txt')
+last_test = Huffman()
+last_test.load_transformation('test_mix.txt')
+
 # test_all_new.save_transformation('test_dico_big_combo.txt')
 # test_load = Huffman()
 # test_load.load_transformation('test_dico_big_combo.txt')
 # test_load.all_decompressing()
+
+## almost 90% compression gj
