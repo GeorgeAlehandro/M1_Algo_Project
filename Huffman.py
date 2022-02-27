@@ -46,7 +46,7 @@ class Huffman:
         self.all_encoded = None
         self.reconstructed_binary = None
         self.decrypted_chain = None
-
+        self.dict_compressed = None
     def calcul_freq(self):
         '''
         Calculer la frequence de chaque lettre
@@ -212,8 +212,8 @@ class Huffman:
             sequence[begin_dict:len(sequence)])
         print(type(self.binary_tree_value))
         self.all_encoded = sequence[0:begin_dict]
-        print(self.binary_tree_value)
-        print(self.all_encoded)
+        print('dictionnaire',self.binary_tree_value)
+        print('here',self.all_encoded)
         print(file)
 
     def dict_values(self):
@@ -232,7 +232,56 @@ class Huffman:
     def all_decompressing(self):
         self.binary_decoding()
         self.binary_decompression()
+    def compressing_dict(self):
+        self.binary_tree_value = dict(sorted(self.binary_tree_value.items()))
+        values_compressed = ''
+        for value in self.binary_tree_value.values():
+            protection = '1' + value
+            #print(value)
+            print(protection)
+            #int_from_binary = str(int(protection,2))
+            values_compressed += chr(int(protection, 2))
+        print(values_compressed)
+        print(len(values_compressed))
+        values_compressed = '{' + values_compressed +'}'
+        print(len(values_compressed))
+        check = ['A','T','C','G','N']
+        for nuc in check:
+            if nuc not in self.binary_tree_value.keys():
+                values_compressed += nuc
+        print(values_compressed)
+        self.dict_compressed = values_compressed
+        return values_compressed
 
+    def decompressing_dict(self):
+        to_map = []
+        begin_number = self.dict_compressed.index('{')+1
+        end_number = self.dict_compressed.index('}')
+        print(begin_number, end_number)
+        numbers = self.dict_compressed[begin_number:end_number] #only takes the numbers
+        print(numbers)
+        #print(numbers)
+        #print(len(numbers))
+        print('here')
+        print(to_map)
+        for number in numbers:
+            back_to_old = bin(ord(number))[3:]#Removes 0b1
+         #   print((back_to_old))
+            to_map.append(back_to_old)
+            print(back_to_old)
+        print(to_map)
+        new = {'A': None, 'C': None, 'G': None, 'N': None,'T': None}
+        letters = [word for word in self.dict_compressed if word.isalpha()]
+        for letter in letters:
+            del new[letter]
+        keys_of_dict = list(new)
+        #print(keys_of_dict)
+        #print(len(to_map))
+        for i in range(len(new)):
+            new[keys_of_dict[i]] = to_map[i]
+        print(self.binary_tree_value)
+        self.binary_tree_value = new
+        print(new) 
 
 def dict2File(data, filename):
     bytes = io.BytesIO()
@@ -268,24 +317,24 @@ def file2Dict(filename):
 # print(rd)
 # print(type(rd))
 # print(o.binary_decompression())
-#TODO Problem with multiple l binarytreevalue
+# Meshekle wa2et na3mel kaza huffman 3am yentek l binarytreevalue
 test_all_new = Huffman(
-    'TTGACGATGCACGCGCTAGCATATATCGTACGATCATCGACTAGCATCGGCGTAAGCTTGACGATGCACGCGCTAGCA')
-# test_all_new.all_compressing()
+    'NAAAAAAAACAGAAAAAANATATAAAACAGAANNTANTNANCNAAAAANNNAN')
+#test_all_new.all_compressing()
 # print(test_all_new.binary_tree_value, 'here')
 # print(test_all_new.all_encoded)
-# test_all_new.save_transformation('testHuffmansave.txt')
-# test_de = Huffman('''¢Åè°LÑbÔ
-# ØO7''')
-# test_de.load_transformation('testHuffmansave.txt')
-# print(test_de.all_encoded)
+#test_all_new.save_transformation('testHuffmansave.txt')
+#test_de = Huffman()
+#test_de.load_transformation('testHuffmansave.txt')
+#print('testestsetes'+test_de.all_encoded)
 # test_de.binary_tree_value = {'A': '1', 'T': '01', 'C': '001', 'G': '000'}
 # print(test_de.binary_tree_value)
 # test_de.all_decompressing()
 # print(test_de.binary_tree_value)
 # PROBLEM WITH: https://stackoverflow.com/questions/2398393/identifying-and-removing-null-characters-in-unix/2399817#2399817
 test_all_new.all_compressing()
-test_all_new.dict_values()
+test_all_new.compressing_dict()
+test_all_new.decompressing_dict()
 # test_all_new.save_transformation('test_dico_big_combo.txt')
 # test_load = Huffman()
 # test_load.load_transformation('test_dico_big_combo.txt')
