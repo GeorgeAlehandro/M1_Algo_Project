@@ -5,17 +5,14 @@ Tkinter View of the project.
 """
 
 from __future__ import absolute_import
-from tkinter import Button
-from tkinter import Label
-from tkinter import Tk
-from tkinter import Toplevel
-from tkinter import messagebox
-from tkinter import StringVar
+import tkinter as tk
+from tkinter import *
 from tkinter.ttk import Treeview
 from tkinter.ttk import Scrollbar
 from tkinter import Entry
 from view import SuperView
 from tkinter.filedialog import askopenfile
+from tkinter import ttk
 
 
 class View(Tk, SuperView):
@@ -32,14 +29,9 @@ class View(Tk, SuperView):
         self.widgets_labs = {}
         self.widgets_entry = {}
         self.widgets_button = {}
+        self.widgets_tab = {}
         self.buttons = ["Generate Code", "Reconstruct", "Save", "Load"]
         #self.extrabuttons = ["Content", "Clear"]
-        self.autocomplete_values = []
-        self.list_surname = []
-        self.list_name = []
-        self.list_telephone = []
-        self.list_address = []
-        self.list_city = []
 
     def fetch_autocomplete_values(self):
         '''
@@ -53,7 +45,7 @@ class View(Tk, SuperView):
                                     self.list_telephone,
                                     self.list_address, self.list_city]
 
-    def get_value(self):
+    def get_value_BWT(self):
         '''
         Returns the values introduced by the user.
         '''
@@ -64,20 +56,24 @@ class View(Tk, SuperView):
             return False
         return entry_fetch
 
-    def update_values(self):
+    def get_value_BWT_pedagogic(self):
         '''
-        To update autocomplete values after user entry.
+        Returns the values introduced by the user.
         '''
-        self.widgets_entry["Surname"].config(
-            completevalues=self.list_surname)
-        self.widgets_entry["Name"].config(
-            completevalues=self.list_name)
-        self.widgets_entry["Telephone"].config(
-            completevalues=self.list_telephone)
-        self.widgets_entry["Address"].config(
-            completevalues=self.list_address)
-        self.widgets_entry["City"].config(
-            completevalues=self.list_city)
+        entry_fetch = (self.widgets_entry["BWT Pedagogic"].get())
+        if all(item == '' for item in entry_fetch):
+            messagebox.showerror('Entry unavailable',
+                                 self.error_messages[3])
+            return False
+        return entry_fetch
+
+    def get_value_Huffman(self):
+        entry_fetch = (self.widgets_entry["HUFFMAN"].get())
+        if all(item == '' for item in entry_fetch):
+            messagebox.showerror('Entry unavailable',
+                                 self.error_messages[3])
+            return False
+        return entry_fetch
 
     def create_fields(self):
         '''
@@ -86,54 +82,126 @@ class View(Tk, SuperView):
         i, j, k = 0, 0, 0
 
         for idi in self.entries:
-            lab = Label(self, text=idi.capitalize())
-            self.widgets_labs[idi] = lab
-            lab.grid(row=i, column=0)
-
+            j = 0
+            # lab = Label(self, text=idi.capitalize())
+            # self.widgets_labs[idi] = lab
+            # lab.grid(row=i, column=0)
+            tab = Frame(self.my_notebook, width=700, height=700, bg='white')
+            self.widgets_tab[idi] = tab
+            tab.grid()
+            self.my_notebook.add(tab, text=idi)
             var = StringVar()
-            entry = Entry(self, text=var)
+            entry = Entry(self.widgets_tab[idi], text=var)
             self.widgets_entry[idi] = entry
-            entry.grid(row=i, column=1)
-
-            i += 1
-
-        for idi in self.buttons:
-            buttown = Button(self, text=idi, command=(
-                lambda button=idi: self.button_press_handle(button)))
-            self.widgets_button[idi] = buttown
+            entry.grid(row=0, columnspan=4)
+            for button_name in self.buttons:
+                buttown = Button(self.widgets_tab[idi], text=button_name, command=(
+                    lambda button=button_name+idi: self.button_press_handle(button)))
+                print(button_name+idi)
+                self.widgets_button[button_name+idi] = buttown
+                buttown.grid(row=i+1, column=j)
+                j += 1
+        for idi in self.pedagogic_entries:
+            j = 0
+            # lab = Label(self, text=idi.capitalize())
+            # self.widgets_labs[idi] = lab
+            # lab.grid(row=i, column=0)
+            tab = Frame(self.my_notebook, width=700, height=700, bg='white')
+            self.widgets_tab[idi] = tab
+            tab.grid()
+            self.my_notebook.add(tab, text=idi)
+            var = StringVar()
+            entry = Entry(self.widgets_tab[idi], text=var)
+            self.widgets_entry[idi] = entry
+            entry.grid(row=0, columnspan=4)
+            for button_name in self.buttons:
+                buttown = Button(self.widgets_tab[idi], text=button_name, command=(
+                    lambda button=button_name+idi: self.button_press_handle(button)))
+                print(button_name+idi)
+                self.widgets_button[button_name+idi] = buttown
+                buttown.grid(row=i+1, column=j)
+                j += 1
+            buttown = Button(self.widgets_tab[idi], text='Next', command=(
+                lambda button='Next'+idi: self.button_press_handle(button)), state='disabled')
+            self.widgets_button['Next'+idi] = buttown
             buttown.grid(row=i+1, column=j)
-
             j += 1
-        # for idi in self.extrabuttons:
-        #     buttown = Button(self, text=idi, command=(
-        #         lambda button=idi: self.button_press_handle(button)))
-        #     self.widgets_button[idi] = buttown
-        #     buttown.grid(row=k, column=2, rowspan=2)
-        #     # self.widgets_button[idi].config(command = idi)
+        print(self.widgets_tab)
+        print(self.widgets_entry)
+        print(self.widgets_button)
+        self.my_notebook.grid()
+        # for frame in self.widgets_tab.keys():
+        #     j = 0
+        #     print(frame)
+        #     for idi in self.buttons:
+        #         print(idi)
+        #         buttown = Button(self.widgets_tab[frame], text=idi, command=(
+        #             lambda button=idi: self.button_press_handle(button)))
+        #         self.widgets_button[idi] = buttown
+        #         buttown.grid(row=i+1, column=j)
 
-        #     k += 2
+        #         j += 1
+    def disable_next(self):
+        for idi in self.pedagogic_entries:
+            self.widgets_button['Next'+idi].configure(state='disabled')
 
-    def delete_display(self, title, result):
-        '''
-        Message display after delete.
-        '''
-        if result is not None:
-            messagebox.showinfo(title, result)
-        else:
-            messagebox.showerror(title, self.error_messages[1])
+    def focusText(self, event):
+        self.pedagogic_result.config(state='normal')
+        self.pedagogic_result.focus()
+        self.pedagogic_result.config(state='disabled')
 
-    def insertion_display(self, title, result):
+    def result_display(self, result):
         '''
         Message display after insertion
         '''
-        if result is not None:
-            messagebox.showinfo(title, result)
-            self.fetch_autocomplete_values()
-        else:
-            messagebox.showerror(
-                title, self.error_messages[0])
-        for value in self.widgets_entry.values():
-            value.delete(0, 'end')
+        this_tab = self.widgets_tab['BWT Pedagogic']
+        self.below_entry = Frame(this_tab)
+        self.below_entry.grid(row=2, columnspan=4)
+        # lezemla tezbit
+        # TODO
+        try:
+            self.final_result.configure(state='normal')
+            self.final_result.delete('1.0', 'end')
+            self.final_result.insert('1.0', result)
+            self.final_result.configure(state='disabled')
+        except:
+            self.final_result = CustomText(
+                self.below_entry, height=2, width=50, borderwidth=0)
+            self.final_result.insert('1.0', result)
+            self.final_result.configure(
+                state='disabled', bg=this_tab.cget('bg'), relief="flat")
+            self.final_result.grid(row=2, columnspan=4, sticky='ns')
+            self.final_result.bind('<Button-1>', self.focusText)
+
+    def pedagogic_display(self, result, widgets_tab):
+        #'BWT Pedagogic'
+        this_tab = self.widgets_tab[widgets_tab]
+        self.below_entry = Frame(this_tab)
+        self.below_entry.grid(row=2, columnspan=5)
+        try:
+            self.pedagogic_result.configure(state='normal')
+            self.pedagogic_result.delete('1.0', 'end')
+            for element in result:
+                self.pedagogic_result.insert('end', element+'\n')
+            self.pedagogic_result.configure(state='disabled')
+        except:
+            self.pedagogic_result = CustomText(
+                self.below_entry, height=40, width=50, borderwidth=0, font=('Times new roman', 15))
+            for element in result:
+                self.pedagogic_result.insert('end', element+'\n')
+            #     self.pedagogic_result.tag_add('last', float(len(element)-1), 'end')
+            # self.pedagogic_result.tag_configure('last', background='yellow',
+            #                                     font='helvetica 14 bold', relief='raised')
+            self.pedagogic_result.configure(
+                state='disabled', bg=this_tab.cget('bg'), relief="flat")
+            self.pedagogic_result.grid(row=3, columnspan=2)
+            self.pedagogic_result.bind('<Button-1>', self.focusText)
+        # buttown = Button(self.below_entry, text='Next',
+        #                  command=self.pedagogic_display(result[0]))
+        # buttown.grid(row=4)
+        # TODO: Next button not balbling
+# self.pedagogic_result.highlight_pattern(
+#             '.*\$$', 'Found', regexp=True)
 
     def on_closing(self):
         '''
@@ -189,18 +257,56 @@ class View(Tk, SuperView):
         else:
             messagebox.showerror('Results', 'Results were not found')
 
+    def highlight_BWT(self):
+        print('MAFROUD HIGHLIGHT')
+        self.pedagogic_result.tag_configure(
+            "Found", foreground="yellow", background='grey', underline=True)
+        self.pedagogic_result.highlight_pattern(
+            self.pattern, 'Found', regexp=True)
+
+# '.*\$$', 'Found', regexp=True)
+
     def button_press_handle(self, buttonid):
         '''
         Assign a command for each pressed button.
         '''
-        if buttonid == "Generate Code":
-            self.controller.string_code()
-        elif buttonid == "Reconstruct":
-            self.controller.reconstruct()
-        elif buttonid == "Save":
+        if buttonid == "Generate CodeBWT":
+            print(buttonid)
+            self.controller.string_code_BWT()
+        if buttonid == "Generate CodeBWT Pedagogic":
+            print(buttonid)
+            self.controller.string_code_BWT_pedagogic()
+            self.pattern = '.$'
+            self.widgets_button['NextBWT Pedagogic'].configure(state='normal')
+        if buttonid == "Generate CodeHUFFMAN":
+            print(buttonid)
+            self.controller.string_code_Huffman()
+        elif buttonid == "ReconstructBWT":
+            print(buttonid)
+            self.controller.reconstruct_BWT()
+        elif buttonid == "ReconstructBWT Pedagogic":
+            print(buttonid)
+            self.controller.reconstruct_BWT_pedagogic()
+            self.pattern = '.*\$$'
+            self.widgets_button['NextBWT Pedagogic'].configure(state='normal')
+        elif buttonid == "ReconstructHUFFMAN":
+            print(buttonid)
+            self.controller.reconstruct_Huffman()
+        elif buttonid == "SaveBWT":
+            print(buttonid)
             self.controller.save()
-        elif buttonid == "Load":
+        elif buttonid == "SaveHUFFMAN":
+            print(buttonid)
+            self.controller.save()
+        elif buttonid == "LoadBWT":
+            print(buttonid)
             self.controller.load()
+        elif buttonid == "LoadHUFFMAN":
+            print(buttonid)
+            self.controller.load()
+        elif buttonid == "NextBWT Pedagogic":
+            print(buttonid)
+            self.controller.next_button('BWT Pedagogic')
         elif buttonid == "Clear":
             for value in self.widgets_entry.values():
                 value.delete(0, 'end')
@@ -213,8 +319,61 @@ class View(Tk, SuperView):
         '''
         Main execution of the Tkinter view.
         '''
-        self.title("Phone Notebook")
+        self.title("Algo")
+        self.geometry("700x700")
+        self.my_notebook = ttk.Notebook(self)
+        # my_notebook.pack()
+        # my_frame1 = Frame(my_notebook, width=500, height=500, bg='blue')
+        # my_frame2 = Frame(my_notebook, width=500, height=500, bg='red')
+        # my_frame1.pack(fill="both", expand=1)
+        # my_frame2.pack(fill="both", expand=1)
+
+        # my_notebook.add(my_frame1, text="Blue Tab")
+        # my_notebook.add(my_frame2, text="Red Tab")
         #self.protocol("WM_DELETE_WINDOW", self.on_closing)
       #  self.fetch_autocomplete_values()
         self.create_fields()
         self.mainloop()
+
+
+class CustomText(tk.Text):
+    '''A text widget with a new method, highlight_pattern()
+
+    example:
+
+    text = CustomText()
+    text.tag_configure("red", foreground="#ff0000")
+    text.highlight_pattern("this should be red", "red")
+
+    The highlight_pattern method is a simplified python
+    version of the tcl code at http://wiki.tcl.tk/3246
+    '''
+
+    def __init__(self, *args, **kwargs):
+        tk.Text.__init__(self, *args, **kwargs)
+
+    def highlight_pattern(self, pattern, tag, start="1.0", end="end",
+                          regexp=False):
+        '''Apply the given tag to all text that matches the given pattern
+
+        If 'regexp' is set to True, pattern will be treated as a regular
+        expression according to Tcl's regular expression syntax.
+        '''
+
+        start = self.index(start)
+        end = self.index(end)
+        self.mark_set("matchStart", start)
+        self.mark_set("matchEnd", start)
+        self.mark_set("searchLimit", end)
+
+        count = tk.IntVar()
+        while True:
+            index = self.search(pattern, "matchEnd", "searchLimit",
+                                count=count, regexp=regexp)
+            if index == "":
+                break
+            if count.get() == 0:
+                break  # degenerate pattern which matches zero-length strings
+            self.mark_set("matchStart", index)
+            self.mark_set("matchEnd", "%s+%sc" % (index, count.get()))
+            self.tag_add(tag, "matchStart", "matchEnd")
