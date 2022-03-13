@@ -13,13 +13,17 @@ class BWT:
         self.string_coded = None
         self.motif = None
         if motif is not None:
-            if '$' in motif:
-                self.string_coded = motif
-            else:
-                self.motif = motif
+            if all(letter in ['A', 'T', 'C', 'G', 'N', '\n', '$'] for letter in motif.upper()):
+                motif = motif.lstrip().rstrip().replace('\n', "").upper()
+                if '$' in motif:
+                    self.string_coded = motif.upper()
+                else:
+                    self.motif = motif.upper()
         if string_coded is not None:
-            if '$' not in motif:
-                self.string_coded = string_coded
+            if all(letter in ['A', 'T', 'C', 'G', 'N', '\n', '$'] for letter in string_coded.upper()):
+                string_coded = string_coded.lstrip().rstrip().replace('\n', "").upper()
+                if '$' not in motif:
+                    self.string_coded = string_coded.upper()
 
     def string_code(self):
         # if self.motif is None:
@@ -70,9 +74,8 @@ class BWT:
             string_code += element[length_motif]
      #   yield list_of_BTW
         self.string_coded = string_code
-        print(list_of_BTW)
-        print(string_code)
-        return string_code, list_of_BTW
+
+        yield string_code
 
     def reconstruction(self):
         if '$' not in self:
@@ -101,8 +104,8 @@ class BWT:
             if _.endswith('$'):
                 sequence_reconstructed = _[:-1]
                 print(sequence_reconstructed)
-        #self.motif = sequence_reconstructed
-        # print(self.wahem_step)
+        self.motif = sequence_reconstructed
+        print(self.wahem_step)
         return sequence_reconstructed
 
     def reconstruction_pedagogic(self):
@@ -114,24 +117,34 @@ class BWT:
             reconstruction = [m+n for m, n in zip(original, reconstruction)]
             yield(reconstruction)
             reconstruction.sort()
+           # print('here')
             yield(reconstruction)
         for _ in reconstruction:
             if _.endswith('$'):
                 sequence_reconstructed = _[:-1]
-             #   yield(sequence_reconstructed)
-            return 'ENd'
+                self.motif = sequence_reconstructed
+                yield(sequence_reconstructed)
 
     def save_transformation(self, file):
         file = open(file, 'w')
-        file.write(self.string_code())
+        if self.string_coded is None:
+            self.string_code()
+        file.write(self.string_coded)
+        file.close()
+
+    def save_reconstruction(self, file):
+        file = open(file, 'w')
+        if self.motif is None:
+            self.reconstruction()
+        file.write(self.motif)
         file.close()
 
     def load_transformation(self, file):
-        #file = open(file, 'r')
-        sequence = str(file.readline())
+        file = open(file, 'r')
+        sequence = str(file.read())
         print(sequence)
         file = BWT(sequence)
-        print(file.string_coded)
+        return sequence
         # file.reconstruction()
 
     def __iter__(self):
@@ -146,28 +159,3 @@ class BWT:
                 i += 1
 
 
-a = BWT('ACTTGATC')
-print(a.motif)
-print(a.string_code())
-b = BWT('C$GTATATC')
-b.reconstruction()
-test = a.string_code_pedagogic()
-print(a.reconstruction_pedagogic())
-print(next(test))
-print(next(test))
-print(next(test))
-print(next(test))
-print(next(test))
-print(next(test))
-print(next(test))
-print(next(test))
-print(next(test))
-
-# print(next(test))
-# # print(type(a))
-# # print(a.string_coded)
-# a.save_transformation('test')
-# a.load_transformation('test')
-# # TEST.reconstruction()
-# print(TEST.string_coded)
-# print(TEST.motif)
