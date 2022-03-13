@@ -15,11 +15,14 @@ class SuperView():
         constructor of the super class.
         '''
         self.controller = controller
-        self.entries = ["BWT", "HUFFMAN"]
+        self.entries = ["Entry"]
+        #self.pedagogic_entries = ["BWT Pedagogic", "HUFFMAN Pedagogic"]
         self.error_messages = ["You need to specify name and surname.",
-                               "Surname Name not found in phonebook.",
-                               "Telephone should be only digits.",
-                               'Entries cannot be all empty.'
+                               "Error in compressed sequence.",
+                               "Sequence can only contain A,T,C,G,N,$",
+                               'Entries cannot be all empty.',
+                               'Error in BWT sequence inserted. It should consist of only A,T,C,G,N with exactly one $.',
+                               "Sequence can only contain A,T,C,G,N",
                                ]
 
     # def create_interface(self):
