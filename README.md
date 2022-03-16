@@ -37,7 +37,7 @@ And the following pngs:
 - github_logo.png
 - mail.png
 
-And finally the following pyhton scripts:  
+And finally the following python scripts:  
 - main.py
 - huffman.py
 - bwt.py
@@ -50,6 +50,15 @@ And finally the following pyhton scripts:
 All the files should be in the same directory.  
 Also, it's recommended to run the main.py script from terminal. Sometimes the IDE doesn't allow for backend modification, which will fail to run the program
 
+## Technical information
+### Pedagogic Mode
+Using python generators, with yield and next. Doesn't store each result in memory, rather overwrites the result before.
+### Final Result
+Returns the last item of the generator.
+### CustomText
+Highlights the BWT transformed or reconstructed sequences when using the pedagoic mode.
+### ToolTip
+Shows tips for the user when he hovers over the different buttons.  Also shows the real-time 
 
 ## About main.py
 To run the program, we should call
