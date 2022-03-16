@@ -59,6 +59,19 @@ Returns the last item of the generator.
 Highlights the BWT transformed or reconstructed sequences when using the pedagoic mode.
 ### ToolTip
 Shows tips for the user when he hovers over the different buttons.  Also shows the real-time 
+### Show Tree
+By using the method draw and taking the main node of the tree as argument, the tree will be available to be represented after clicking on the Show Tree button (after compressing).
+### Load
+Reads the sequence stored inside the file (.bz2 or .txt) and put it inside the model.
+### Save
+Three posible saves:
+    - Save of the ADN Motif (.txt)
+    - Save of the BWT Sequence (.bz2)
+    - Save of the Compressed Sequence (.txt)
+### Model Reset
+When the user changes the entry or loads a file, the model should be resetted. If there was a pre-existing model, the user will be prompted to confirm his choice or not.
+## Real-time Sequence Tracking
+Allows the track of the analyzed sequence as the user writes or does operations in the real time. Hover the mouse over the images to observe the sequences that you got so far!
 
 ## About main.py
 To run the program, we should call
