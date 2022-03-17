@@ -66,14 +66,14 @@ class Huffman:
         '''
         Calculer la frequence de chaque lettre
         '''
-        dico = {}
+        freq_dict = {}
         for nuc in self.sequence:
-            if nuc not in dico:
-                dico[nuc] = 1
+            if nuc not in freq_dict:
+                freq_dict[nuc] = 1
             else:
-                dico[nuc] += 1
-        self.frequency_dict = dico
-        return 'Has the following frequences ' + str(dico)
+                freq_dict[nuc] += 1
+        self.frequency_dict = freq_dict
+        return 'Has the following frequences ' + str(freq_dict)
 
     def create_nodes(self):
         '''
@@ -81,8 +81,8 @@ class Huffman:
         '''
         nodes = []
         self.calcul_freq()
-        dico = self.frequency_dict
-        for symb, freq in dico.items():
+        freq_dict = self.frequency_dict
+        for symb, freq in freq_dict.items():
             new_node = Node(freq, symb)
             nodes.append(new_node)
         self.nodes = nodes
@@ -194,13 +194,18 @@ class Huffman:
         '''
         Iterating through the compressed file, until finding a match
         '''
+        # Creating a copy of the two attributes
         compressed = self.reconstructed_binary
         binary_tree_value = self.binary_tree_value
         key_list = []
+        # Residual is the variable that stays after each itteration if no match
+        # Has been found
         residual = ''
         for i in ''.join(compressed):
             i = residual+i
             if i in binary_tree_value.values():
+                # Match assigning between the list of keys and the values of
+                # binary_tree_value
                 match = list(binary_tree_value.keys())[
                     list(binary_tree_value.values()).index(i)]
                 key_list.append(match)
@@ -210,48 +215,50 @@ class Huffman:
             else:
                 # Takes the unmatched part, adds it to the next iteration
                 residual = i
+        # Decrypted chain is the string version of key_list coming from the match
+        # Swing what the compressed version becomes
         decrypted_chain = ''.join(key_list)
-        # print(str(compressed)+' becomes below')
-        # print(decrypted_chain)
+        # Storing into two attributes
         self.decrypted_chain = decrypted_chain
         self.sequence = decrypted_chain
         return str(compressed)+' becomes ' + str(decrypted_chain)
 
     def save_compression(self, file):
-        # file = open(file, 'w')
-        # file.write(self.all_encoded)
-        # file.write(self.dict_compressed)
+        '''
+        Codecs file compression of the compressed files files
+        '''
         file = codecs.open(file, 'w', encoding='utf-8-sig')
+        # Writing the sequence compressed
         file.write(self.all_encoded)
-        # print('The whole sequence written is ')
-        # print(len(self.all_encoded))
-        # print(len(self.dict_compressed))
-        # print(self.all_encoded+self.dict_compressed)
+        # Writing the dictionnary compressed
         file.write(self.dict_compressed)
-        # print('Whole len should be written: ' +
-        #       str((len(self.all_encoded)+len(self.dict_compressed))))
         file.close()
 
     def coding_partition(self, entry):
+        '''
+        Complements the load_transformation by partioning this file input by
+        the '□' 
+        '''
+        # Sets the beginning of dict
         begin_dict = entry.index('□')
+        # String representation of dict
         str_rep_of_dic = entry[begin_dict:len(entry)]
+        # Attribute assignment
         self.dict_compressed = str_rep_of_dic
-        # print(self.dict_compressed)
+        # Calls for decompressing the dictionnary
         self.decompressing_dict()
-        # print('coding_partition')
-        # print(entry)
+        # Other part of the compressed file is the compressed sequence
         self.all_encoded = entry[0:begin_dict]
 
     def load_transformation(self, file):
+        '''
+        Codecs load of the input file
+        Complemented by the method partition() in order to divide the compressed
+        sequence
+        '''
         file = codecs.open(file, 'r', encoding='utf-8-sig')
         sequence = file.read()
-        print(sequence)
         self.coding_partition(sequence)
-
-    # def dict_values(self):
-    #     compress = ''
-    #     for value in self.binary_tree_value.values():
-    #         print(value)
 
     def compressing_dict(self):
         '''
