@@ -43,10 +43,11 @@ class Controller():
             values_unpack = self.view.get_value()
             self.model = Model(values_unpack)
         if values_unpack:
+            # System view behavior
             self.view.progress_check('DNA Motif')
             self.view.progress_check('Decompressed')
+            # Operation assignment to BWT transformation
             self.operation_BWT = self.model.BWT_transformation()
-#            self.view.pedagogic_display(last)
 
     def compresion_Huffman(self, choice=None):
         '''
@@ -68,9 +69,7 @@ class Controller():
             self.model.sequence = self.model.DNA_motif
         if choice == 'BWT' and self.model.DNA_motif is not None:
             self.model.sequence = self.model.BWT_sequence
-        print('here self.sequence', self.model.sequence)
         self.operation_Huffman = self.model.pedagogic_compressing()
-# Todo: MESHEKLE BASS 3AM NEF2OS DECOMPRESS AFTER L COMPRESS
 
     def reconstruct_BWT(self):
         '''
@@ -87,8 +86,6 @@ class Controller():
             test = Model(values_unpack)
             self.model = test
             self.operation_BWT = self.model.BWT_reconstruction()
-        else:
-            print('HEHE')
 
     def decompresion_Huffman(self):
         '''
@@ -101,7 +98,6 @@ class Controller():
             self.view.progress_check('Compressed')
             test = Model(values_unpack)
             self.model = test
-            print(self.model.all_encoded)
         self.operation_Huffman = self.model.pedagogic_decompressing()
 
     def reset(self):
@@ -124,45 +120,63 @@ class Controller():
         self.attributes_check()
 
     def next_button_bwt(self):
+        '''
+        Step-by-step operation handler for the BWT's operation
+        '''
+        # As long as there are no errors
         try:
             A = next(self.operation_BWT)
-            print(A)
             if isinstance(A, list):
                 self.view.result_display(A, 'result_BWT')
+        # When error is raised
         except:
+            # BWT Buttons become unpressed
             self.view.clear_pressed_BWT()
-            print('la2a error')
+            # Highlight of the BWT text box
             self.view.highlight_BWT()
+            # Last and Next are desactivated
             self.view.desactivate_buttons_BWT()
+            # Checks for the attributes of the model
             self.attributes_check()
 
     def final_result_huffman(self):
+        '''
+        Fast forward into the final result of the Huffman operation
+        '''
+        # Assign the last item of the generator to 'last'
         *_, last = self.operation_Huffman
         self.view.result_display(last, 'result_huffman')
+        # Unpresses the buttons
         self.view.clear_pressed_huffman()
+        # Checks for the tree after decompression
         if hasattr(self.model, 'tree'):
             self.view.enable_show_tree()
         if hasattr(self.model, 'sequence') and self.model.sequence is not None:
             # Decompressed sequnece is assigned to the model.
             self.model.decompression_assign()
-            print(self.model.DNA_motif)
-            print(self.model.BWT_sequence)
         self.attributes_check()
 
     def next_button_huffman(self):
-
+        '''
+        Step-by-step operation handler for the Huffman's operation
+        '''
+        # As long as there are no errors
         try:
             A = next(self.operation_Huffman)
-            print(A)
             self.view.result_display(A, 'result_huffman')
+            # Activates tree
             if hasattr(self.model, 'tree'):
                 self.view.enable_show_tree()
             if hasattr(self.model, 'sequence') and self.model.sequence is not None:
                 # Decompressed sequnece is assigned to the model.
                 self.model.decompression_assign()
+        # When error is raised
         except:
+            # Huffman buttons become unpressed
             self.view.clear_pressed_huffman()
+            # Desactivates Next and Last
             self.view.desactivate_buttons_huffman()
+            # Checks for the attributes inside the model
             self.attributes_check()
 
     def attributes_check(self):
@@ -215,6 +229,7 @@ class Controller():
         Extracts the tree attribute out of the model in order to plot it in view
         '''
         if hasattr(self.model, 'tree'):
+            # Extracts the part to be plotted from the model part
             to_plot = self.model.tree[0]
             self.view.draw(to_plot, 0)
 
@@ -243,7 +258,6 @@ class Controller():
                 self.model.save_compression(file)
             else:
                 self.view.failed_save_warning()
-# IF MODEL HAS ATTRIBUTE BLA BLA ACTIVATE
 
     def reset_operations(self):
         '''
@@ -269,8 +283,6 @@ class Controller():
                 self.view.update_entry(loaded_file.sequence)
             else:
                 file = file.replace('\n', "")
-                print('HERE')
-                print(file)
                 self.view.update_entry(file)
         if file.endswith('.bz2'):
             # Calls for the load_bzip method which reads compressed files
